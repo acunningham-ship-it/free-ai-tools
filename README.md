@@ -8,7 +8,7 @@
 <h1 align="center">Free AI Tools Suite</h1>
 
 <p align="center">
-  <strong>3 powerful AI tools. Completely free. No signup. No API keys. Just use them.</strong>
+  <strong>4 powerful AI tools. Completely free. No signup. No API keys. Just use them.</strong>
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
 
 ## What Is This?
 
-A collection of **3 free AI-powered tools** that you can use right now in your browser. No accounts, no API keys, no BS. Just paste your input and get professional AI-generated output in seconds.
+A collection of **4 free AI-powered tools** that you can use right now in your browser. No accounts, no API keys, no BS. Just paste your input and get professional AI-generated output in seconds.
 
 Built by **Armani**, a 17-year-old developer, as part of a 24-hour coding challenge.
 
@@ -69,6 +69,20 @@ Built by **Armani**, a 17-year-old developer, as part of a 24-hour coding challe
 
 ---
 
+### 4. AI Code Roast
+> Get your code brutally (but hilariously) roasted by AI.
+
+**[Launch Code Roast](https://crazeemedia.app.n8n.cloud/webhook/roast-my-code)**
+
+- Paste any code and get a savage, funny, but educational roast
+- Sections: First Impressions, The Good, The Bad, The Ugly, Roast Score
+- Actually helpful -- real feedback disguised as comedy
+- Supports 15+ programming languages
+
+**Example:** Paste a simple function --> "Ah, the classic add function -- the culinary equivalent of boiling water."
+
+---
+
 ## Quick Access
 
 | Tool | Description | Link |
@@ -77,6 +91,7 @@ Built by **Armani**, a 17-year-old developer, as part of a 24-hour coding challe
 | **Email Writer** | AI-powered email drafting | [Launch](https://crazeemedia.app.n8n.cloud/webhook/email-writer) |
 | **LinkedIn Post Generator** | Create viral LinkedIn content | [Launch](https://crazeemedia.app.n8n.cloud/webhook/linkedin-writer) |
 | **Code Reviewer** | Instant AI code reviews | [Launch](https://crazeemedia.app.n8n.cloud/webhook/code-review) |
+| **Code Roast** | Hilarious AI code roasts | [Launch](https://crazeemedia.app.n8n.cloud/webhook/roast-my-code) |
 
 ---
 
@@ -126,6 +141,7 @@ If you found this useful, please give it a star! It helps others discover these 
 - [x] AI Email Writer
 - [x] AI LinkedIn Post Generator
 - [x] AI Code Reviewer
+- [x] AI Code Roast
 - [ ] AI Resume Bullet Point Generator
 - [ ] AI Twitter/X Thread Writer
 - [ ] AI Blog Post Outliner
