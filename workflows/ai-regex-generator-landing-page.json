@@ -1,0 +1,191 @@
+{
+  "name": "AI Regex Generator",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "regex-generator",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        250,
+        300
+      ],
+      "id": "regex-landing-wh",
+      "name": "Webhook",
+      "webhookId": "regex-generator-1"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>AI Regex Generator - Generate Regex from Plain English</title>\n<style>\n*{margin:0;padding:0;box-sizing:border-box}\nbody{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh}\n.container{max-width:750px;margin:0 auto;padding:20px}\n.back-link{display:inline-block;color:#667eea;text-decoration:none;margin-bottom:15px;font-size:0.9em}\n.back-link:hover{text-decoration:underline}\n.header{text-align:center;padding:35px 20px;background:linear-gradient(135deg,#00b09b 0%,#96c93d 100%);border-radius:20px;margin-bottom:25px}\n.header h1{font-size:2.2em;color:#fff;margin-bottom:8px}\n.header p{color:rgba(255,255,255,0.9);font-size:1em}\n.form-card{background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:25px;margin-bottom:20px}\nlabel{display:block;color:#ccc;font-size:0.9em;margin-bottom:6px;font-weight:500}\ntextarea,select,input[type=\"text\"]{width:100%;padding:10px 14px;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#e0e0e0;font-size:0.95em;margin-bottom:15px;font-family:inherit}\ntextarea{min-height:100px;resize:vertical}\ntextarea:focus,select:focus,input:focus{outline:none;border-color:#00b09b}\n.examples{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}\n.examples button{background:rgba(0,176,155,0.15);border:1px solid rgba(0,176,155,0.3);color:#00b09b;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.85em;transition:all 0.2s}\n.examples button:hover{background:rgba(0,176,155,0.3);border-color:#00b09b}\n.lang-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}\nbutton[type=\"submit\"]{width:100%;padding:12px;background:linear-gradient(135deg,#00b09b,#96c93d);color:#fff;border:none;border-radius:12px;font-size:1em;font-weight:bold;cursor:pointer;transition:all 0.3s}\nbutton[type=\"submit\"]:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,176,155,0.3)}\nbutton[type=\"submit\"]:disabled{opacity:0.6;cursor:not-allowed;transform:none}\n.result{background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:25px;margin-top:20px;display:none}\n.result h3{color:#00b09b;margin-bottom:12px;font-size:1.1em}\n.regex-box{background:#0d1117;border:1px solid rgba(0,176,155,0.3);border-radius:10px;padding:15px;margin-bottom:15px;position:relative;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.95em;color:#96c93d;word-break:break-all;white-space:pre-wrap}\n.copy-btn{position:absolute;top:8px;right:8px;background:rgba(0,176,155,0.2);border:1px solid rgba(0,176,155,0.3);color:#00b09b;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:0.8em;transition:all 0.2s}\n.copy-btn:hover{background:rgba(0,176,155,0.4)}\n.section{margin-bottom:18px}\n.section h4{color:#ccc;font-size:0.95em;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:5px}\n.section p,.section li{color:#aaa;font-size:0.9em;line-height:1.6}\n.section ul{list-style:none;padding:0}\n.section li{padding:3px 0}\n.loading{display:none;text-align:center;padding:30px}\n.loading .spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:#00b09b;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 15px}\n@keyframes spin{to{transform:rotate(360deg)}}\n.loading p{color:#aaa;font-size:0.9em}\n.api-info{background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:20px;margin-top:20px}\n.api-info h3{color:#fff;margin-bottom:10px;font-size:1em}\n.api-info code{background:#0d1117;padding:10px;border-radius:8px;display:block;font-size:0.82em;color:#96c93d;white-space:pre-wrap;margin-top:8px;line-height:1.5}\n.support{text-align:center;padding:25px;background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;margin-top:20px}\n.support h3{color:#fff;margin-bottom:8px}\n.support p{color:#aaa;font-size:0.9em;margin-bottom:15px}\n.support a{display:inline-block;padding:10px 25px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;text-decoration:none;border-radius:25px;font-weight:bold;transition:all 0.3s}\n.support a:hover{transform:scale(1.05);box-shadow:0 5px 20px rgba(102,126,234,0.3)}\n.footer{text-align:center;padding:20px;color:#666;font-size:0.85em;margin-top:15px}\n.footer a{color:#667eea;text-decoration:none}\n</style>\n</head>\n<body>\n<div class=\"container\">\n<a href=\"https://crazeemedia.app.n8n.cloud/webhook/ai-tools\" class=\"back-link\">&larr; Back to AI Tools Hub</a>\n<div class=\"header\">\n<h1>AI Regex Generator</h1>\n<p>Describe what you want to match in plain English. Get a working regex with explanations and test cases.</p>\n</div>\n<div class=\"form-card\">\n<label>Describe what you want to match:</label>\n<textarea id=\"desc\" placeholder=\"e.g. Match email addresses that end with .edu or .org&#10;e.g. Extract phone numbers in format (xxx) xxx-xxxx&#10;e.g. Validate hex color codes like #FF0000\"></textarea>\n<label style=\"margin-bottom:10px\">Quick examples:</label>\n<div class=\"examples\">\n<button onclick=\"setExample('Match valid email addresses')\">Email addresses</button>\n<button onclick=\"setExample('Match US phone numbers in any format')\">Phone numbers</button>\n<button onclick=\"setExample('Match URLs starting with http or https')\">URLs</button>\n<button onclick=\"setExample('Match IPv4 addresses')\">IP addresses</button>\n<button onclick=\"setExample('Match dates in MM/DD/YYYY format')\">Dates</button>\n<button onclick=\"setExample('Match hex color codes like #FF0000 or #fff')\">Hex colors</button>\n<button onclick=\"setExample('Match strong passwords: 8+ chars, uppercase, lowercase, number, special char')\">Passwords</button>\n<button onclick=\"setExample('Match HTML tags and their content')\">HTML tags</button>\n</div>\n<div class=\"lang-row\">\n<div>\n<label>Primary language:</label>\n<select id=\"lang\">\n<option value=\"python\">Python</option>\n<option value=\"javascript\">JavaScript</option>\n<option value=\"java\">Java</option>\n<option value=\"go\">Go</option>\n<option value=\"csharp\">C#</option>\n<option value=\"php\">PHP</option>\n<option value=\"ruby\">Ruby</option>\n<option value=\"rust\">Rust</option>\n</select>\n</div>\n<div>\n<label>Use case:</label>\n<select id=\"usecase\">\n<option value=\"match\">Match / Find</option>\n<option value=\"validate\">Validate entire string</option>\n<option value=\"extract\">Extract / Capture groups</option>\n<option value=\"replace\">Search &amp; Replace</option>\n</select>\n</div>\n</div>\n<button type=\"submit\" id=\"genBtn\" onclick=\"generate()\">Generate Regex</button>\n</div>\n<div class=\"loading\" id=\"loading\">\n<div class=\"spinner\"></div>\n<p>Crafting your regex...</p>\n</div>\n<div class=\"result\" id=\"result\"></div>\n<div class=\"api-info\">\n<h3>API Access</h3>\n<p style=\"color:#aaa;font-size:0.9em\">Use this tool programmatically via our free API:</p>\n<code>curl -X POST https://crazeemedia.app.n8n.cloud/webhook/regex-api \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"description\": \"match email addresses\", \"language\": \"python\"}'</code>\n</div>\n<div class=\"support\">\n<h3>&#9829; Support Free AI Tools</h3>\n<p>This tool is free forever. If it saved you time, consider supporting!</p>\n<a href=\"https://ko-fi.com/armanidev\" target=\"_blank\">Support on Ko-fi</a>\n</div>\n<div class=\"footer\">\n<p>Built by <a href=\"https://github.com/acunningham-ship-it\" target=\"_blank\">Armani</a> | <a href=\"https://crazeemedia.app.n8n.cloud/webhook/ai-tools\">More AI Tools</a> | <a href=\"https://payhip.com/ArmanisDevTools\" target=\"_blank\">Premium Templates</a></p>\n</div>\n</div>\n<script>\nfunction setExample(text){document.getElementById('desc').value=text}\nasync function generate(){\nconst desc=document.getElementById('desc').value.trim();\nif(!desc){alert('Please describe what you want to match.');return}\nconst lang=document.getElementById('lang').value;\nconst usecase=document.getElementById('usecase').value;\nconst btn=document.getElementById('genBtn');\nconst loading=document.getElementById('loading');\nconst result=document.getElementById('result');\nbtn.disabled=true;btn.textContent='Generating...';\nloading.style.display='block';result.style.display='none';\ntry{\nconst resp=await fetch('https://crazeemedia.app.n8n.cloud/webhook/regex-api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({description:desc,language:lang,usecase:usecase})});\nconst data=await resp.json();\nconst output=data.regex||data.output||data.result||JSON.stringify(data);\nresult.innerHTML=formatResult(output);\nresult.style.display='block';\n}catch(e){result.innerHTML='<p style=\"color:#f5576c\">Error: '+e.message+'</p>';result.style.display='block'}\nfinally{btn.disabled=false;btn.textContent='Generate Regex';loading.style.display='none'}\n}\nfunction formatResult(text){\nlet html='<h3>Your Generated Regex</h3>';\nconst patternMatch=text.match(/```[^\\n]*\\n([^`]+)```/);\nconst mainPattern=patternMatch?patternMatch[1].trim():null;\nif(mainPattern){\nhtml+='<div class=\"regex-box\"><button class=\"copy-btn\" onclick=\"copyRegex(this)\">Copy</button>'+escapeHtml(mainPattern)+'</div>';\n}\nconst formatted=text\n.replace(/```[^\\n]*\\n([^`]+)```/g,'<div style=\"background:#0d1117;border-radius:8px;padding:10px 14px;margin:8px 0;font-family:monospace;font-size:0.88em;color:#96c93d;white-space:pre-wrap\">$1</div>')\n.replace(/\\*\\*([^*]+)\\*\\*/g,'<strong style=\"color:#fff\">$1</strong>')\n.replace(/`([^`]+)`/g,'<code style=\"color:#96c93d;background:rgba(0,176,155,0.1);padding:1px 5px;border-radius:3px;font-family:monospace\">$1</code>')\n.replace(/^### (.+)$/gm,'<h4 style=\"color:#00b09b;margin:12px 0 6px\">$1</h4>')\n.replace(/^## (.+)$/gm,'<h3 style=\"color:#00b09b;margin:15px 0 8px\">$1</h3>')\n.replace(/\\n/g,'<br>');\nhtml+='<div class=\"section\">'+formatted+'</div>';\nreturn html;\n}\nfunction escapeHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML}\nfunction copyRegex(btn){const text=btn.parentElement.textContent.replace('Copy','').trim();navigator.clipboard.writeText(text).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000)}).catch(()=>{const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000)})}\n</script>\n</body>\n</html>",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        450,
+        300
+      ],
+      "id": "regex-landing-resp",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "activeVersionId": "9b829c58-8e81-4021-af49-ca2dab859e21",
+  "versionCounter": 9,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-02T02:04:37.021Z",
+      "createdAt": "2026-03-02T02:04:37.021Z",
+      "role": "workflow:owner",
+      "workflowId": "JqfBfQLHYFiueeVH",
+      "projectId": "jISBlT19NO0fn5mT",
+      "project": {
+        "updatedAt": "2025-11-19T23:58:51.301Z",
+        "createdAt": "2025-11-19T23:57:07.759Z",
+        "id": "jISBlT19NO0fn5mT",
+        "name": "Armani Cunningham <hamstudios101@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-03-02T02:07:50.822Z",
+    "createdAt": "2026-03-02T02:07:50.822Z",
+    "versionId": "9b829c58-8e81-4021-af49-ca2dab859e21",
+    "workflowId": "JqfBfQLHYFiueeVH",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "regex-generator",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          250,
+          300
+        ],
+        "id": "regex-landing-wh",
+        "name": "Webhook",
+        "webhookId": "regex-generator-1"
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "=<!DOCTYPE html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>AI Regex Generator - Generate Regex from Plain English</title>\n<style>\n*{margin:0;padding:0;box-sizing:border-box}\nbody{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh}\n.container{max-width:750px;margin:0 auto;padding:20px}\n.back-link{display:inline-block;color:#667eea;text-decoration:none;margin-bottom:15px;font-size:0.9em}\n.back-link:hover{text-decoration:underline}\n.header{text-align:center;padding:35px 20px;background:linear-gradient(135deg,#00b09b 0%,#96c93d 100%);border-radius:20px;margin-bottom:25px}\n.header h1{font-size:2.2em;color:#fff;margin-bottom:8px}\n.header p{color:rgba(255,255,255,0.9);font-size:1em}\n.form-card{background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:25px;margin-bottom:20px}\nlabel{display:block;color:#ccc;font-size:0.9em;margin-bottom:6px;font-weight:500}\ntextarea,select,input[type=\"text\"]{width:100%;padding:10px 14px;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#e0e0e0;font-size:0.95em;margin-bottom:15px;font-family:inherit}\ntextarea{min-height:100px;resize:vertical}\ntextarea:focus,select:focus,input:focus{outline:none;border-color:#00b09b}\n.examples{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}\n.examples button{background:rgba(0,176,155,0.15);border:1px solid rgba(0,176,155,0.3);color:#00b09b;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.85em;transition:all 0.2s}\n.examples button:hover{background:rgba(0,176,155,0.3);border-color:#00b09b}\n.lang-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}\nbutton[type=\"submit\"]{width:100%;padding:12px;background:linear-gradient(135deg,#00b09b,#96c93d);color:#fff;border:none;border-radius:12px;font-size:1em;font-weight:bold;cursor:pointer;transition:all 0.3s}\nbutton[type=\"submit\"]:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,176,155,0.3)}\nbutton[type=\"submit\"]:disabled{opacity:0.6;cursor:not-allowed;transform:none}\n.result{background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:25px;margin-top:20px;display:none}\n.result h3{color:#00b09b;margin-bottom:12px;font-size:1.1em}\n.regex-box{background:#0d1117;border:1px solid rgba(0,176,155,0.3);border-radius:10px;padding:15px;margin-bottom:15px;position:relative;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.95em;color:#96c93d;word-break:break-all;white-space:pre-wrap}\n.copy-btn{position:absolute;top:8px;right:8px;background:rgba(0,176,155,0.2);border:1px solid rgba(0,176,155,0.3);color:#00b09b;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:0.8em;transition:all 0.2s}\n.copy-btn:hover{background:rgba(0,176,155,0.4)}\n.section{margin-bottom:18px}\n.section h4{color:#ccc;font-size:0.95em;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:5px}\n.section p,.section li{color:#aaa;font-size:0.9em;line-height:1.6}\n.section ul{list-style:none;padding:0}\n.section li{padding:3px 0}\n.loading{display:none;text-align:center;padding:30px}\n.loading .spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:#00b09b;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 15px}\n@keyframes spin{to{transform:rotate(360deg)}}\n.loading p{color:#aaa;font-size:0.9em}\n.api-info{background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:20px;margin-top:20px}\n.api-info h3{color:#fff;margin-bottom:10px;font-size:1em}\n.api-info code{background:#0d1117;padding:10px;border-radius:8px;display:block;font-size:0.82em;color:#96c93d;white-space:pre-wrap;margin-top:8px;line-height:1.5}\n.support{text-align:center;padding:25px;background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;margin-top:20px}\n.support h3{color:#fff;margin-bottom:8px}\n.support p{color:#aaa;font-size:0.9em;margin-bottom:15px}\n.support a{display:inline-block;padding:10px 25px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;text-decoration:none;border-radius:25px;font-weight:bold;transition:all 0.3s}\n.support a:hover{transform:scale(1.05);box-shadow:0 5px 20px rgba(102,126,234,0.3)}\n.footer{text-align:center;padding:20px;color:#666;font-size:0.85em;margin-top:15px}\n.footer a{color:#667eea;text-decoration:none}\n</style>\n</head>\n<body>\n<div class=\"container\">\n<a href=\"https://crazeemedia.app.n8n.cloud/webhook/ai-tools\" class=\"back-link\">&larr; Back to AI Tools Hub</a>\n<div class=\"header\">\n<h1>AI Regex Generator</h1>\n<p>Describe what you want to match in plain English. Get a working regex with explanations and test cases.</p>\n</div>\n<div class=\"form-card\">\n<label>Describe what you want to match:</label>\n<textarea id=\"desc\" placeholder=\"e.g. Match email addresses that end with .edu or .org&#10;e.g. Extract phone numbers in format (xxx) xxx-xxxx&#10;e.g. Validate hex color codes like #FF0000\"></textarea>\n<label style=\"margin-bottom:10px\">Quick examples:</label>\n<div class=\"examples\">\n<button onclick=\"setExample('Match valid email addresses')\">Email addresses</button>\n<button onclick=\"setExample('Match US phone numbers in any format')\">Phone numbers</button>\n<button onclick=\"setExample('Match URLs starting with http or https')\">URLs</button>\n<button onclick=\"setExample('Match IPv4 addresses')\">IP addresses</button>\n<button onclick=\"setExample('Match dates in MM/DD/YYYY format')\">Dates</button>\n<button onclick=\"setExample('Match hex color codes like #FF0000 or #fff')\">Hex colors</button>\n<button onclick=\"setExample('Match strong passwords: 8+ chars, uppercase, lowercase, number, special char')\">Passwords</button>\n<button onclick=\"setExample('Match HTML tags and their content')\">HTML tags</button>\n</div>\n<div class=\"lang-row\">\n<div>\n<label>Primary language:</label>\n<select id=\"lang\">\n<option value=\"python\">Python</option>\n<option value=\"javascript\">JavaScript</option>\n<option value=\"java\">Java</option>\n<option value=\"go\">Go</option>\n<option value=\"csharp\">C#</option>\n<option value=\"php\">PHP</option>\n<option value=\"ruby\">Ruby</option>\n<option value=\"rust\">Rust</option>\n</select>\n</div>\n<div>\n<label>Use case:</label>\n<select id=\"usecase\">\n<option value=\"match\">Match / Find</option>\n<option value=\"validate\">Validate entire string</option>\n<option value=\"extract\">Extract / Capture groups</option>\n<option value=\"replace\">Search &amp; Replace</option>\n</select>\n</div>\n</div>\n<button type=\"submit\" id=\"genBtn\" onclick=\"generate()\">Generate Regex</button>\n</div>\n<div class=\"loading\" id=\"loading\">\n<div class=\"spinner\"></div>\n<p>Crafting your regex...</p>\n</div>\n<div class=\"result\" id=\"result\"></div>\n<div class=\"api-info\">\n<h3>API Access</h3>\n<p style=\"color:#aaa;font-size:0.9em\">Use this tool programmatically via our free API:</p>\n<code>curl -X POST https://crazeemedia.app.n8n.cloud/webhook/regex-api \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"description\": \"match email addresses\", \"language\": \"python\"}'</code>\n</div>\n<div class=\"support\">\n<h3>&#9829; Support Free AI Tools</h3>\n<p>This tool is free forever. If it saved you time, consider supporting!</p>\n<a href=\"https://ko-fi.com/armanidev\" target=\"_blank\">Support on Ko-fi</a>\n</div>\n<div class=\"footer\">\n<p>Built by <a href=\"https://github.com/acunningham-ship-it\" target=\"_blank\">Armani</a> | <a href=\"https://crazeemedia.app.n8n.cloud/webhook/ai-tools\">More AI Tools</a> | <a href=\"https://payhip.com/ArmanisDevTools\" target=\"_blank\">Premium Templates</a></p>\n</div>\n</div>\n<script>\nfunction setExample(text){document.getElementById('desc').value=text}\nasync function generate(){\nconst desc=document.getElementById('desc').value.trim();\nif(!desc){alert('Please describe what you want to match.');return}\nconst lang=document.getElementById('lang').value;\nconst usecase=document.getElementById('usecase').value;\nconst btn=document.getElementById('genBtn');\nconst loading=document.getElementById('loading');\nconst result=document.getElementById('result');\nbtn.disabled=true;btn.textContent='Generating...';\nloading.style.display='block';result.style.display='none';\ntry{\nconst resp=await fetch('https://crazeemedia.app.n8n.cloud/webhook/regex-api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({description:desc,language:lang,usecase:usecase})});\nconst data=await resp.json();\nconst output=data.regex||data.output||data.result||JSON.stringify(data);\nresult.innerHTML=formatResult(output);\nresult.style.display='block';\n}catch(e){result.innerHTML='<p style=\"color:#f5576c\">Error: '+e.message+'</p>';result.style.display='block'}\nfinally{btn.disabled=false;btn.textContent='Generate Regex';loading.style.display='none'}\n}\nfunction formatResult(text){\nlet html='<h3>Your Generated Regex</h3>';\nconst patternMatch=text.match(/```[^\\n]*\\n([^`]+)```/);\nconst mainPattern=patternMatch?patternMatch[1].trim():null;\nif(mainPattern){\nhtml+='<div class=\"regex-box\"><button class=\"copy-btn\" onclick=\"copyRegex(this)\">Copy</button>'+escapeHtml(mainPattern)+'</div>';\n}\nconst formatted=text\n.replace(/```[^\\n]*\\n([^`]+)```/g,'<div style=\"background:#0d1117;border-radius:8px;padding:10px 14px;margin:8px 0;font-family:monospace;font-size:0.88em;color:#96c93d;white-space:pre-wrap\">$1</div>')\n.replace(/\\*\\*([^*]+)\\*\\*/g,'<strong style=\"color:#fff\">$1</strong>')\n.replace(/`([^`]+)`/g,'<code style=\"color:#96c93d;background:rgba(0,176,155,0.1);padding:1px 5px;border-radius:3px;font-family:monospace\">$1</code>')\n.replace(/^### (.+)$/gm,'<h4 style=\"color:#00b09b;margin:12px 0 6px\">$1</h4>')\n.replace(/^## (.+)$/gm,'<h3 style=\"color:#00b09b;margin:15px 0 8px\">$1</h3>')\n.replace(/\\n/g,'<br>');\nhtml+='<div class=\"section\">'+formatted+'</div>';\nreturn html;\n}\nfunction escapeHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML}\nfunction copyRegex(btn){const text=btn.parentElement.textContent.replace('Copy','').trim();navigator.clipboard.writeText(text).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000)}).catch(()=>{const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000)})}\n</script>\n</body>\n</html>",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          450,
+          300
+        ],
+        "id": "regex-landing-resp",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Armani Cunningham",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-02T02:07:51.035Z",
+        "id": 365,
+        "workflowId": "JqfBfQLHYFiueeVH",
+        "versionId": "9b829c58-8e81-4021-af49-ca2dab859e21",
+        "event": "activated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      },
+      {
+        "createdAt": "2026-03-02T02:07:51.785Z",
+        "id": 367,
+        "workflowId": "JqfBfQLHYFiueeVH",
+        "versionId": "9b829c58-8e81-4021-af49-ca2dab859e21",
+        "event": "activated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      },
+      {
+        "createdAt": "2026-03-02T02:07:50.939Z",
+        "id": 364,
+        "workflowId": "JqfBfQLHYFiueeVH",
+        "versionId": "9b829c58-8e81-4021-af49-ca2dab859e21",
+        "event": "deactivated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      },
+      {
+        "createdAt": "2026-03-02T02:07:51.406Z",
+        "id": 366,
+        "workflowId": "JqfBfQLHYFiueeVH",
+        "versionId": "9b829c58-8e81-4021-af49-ca2dab859e21",
+        "event": "deactivated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    ]
+  }
+}

@@ -1,0 +1,515 @@
+{
+  "name": "Roast My Website API",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "roast-website-api",
+        "responseMode": "responseNode",
+        "httpMethod": "POST",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, OPTIONS"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ],
+      "id": "roast-web-api-wh",
+      "name": "Webhook",
+      "webhookId": "roast-web-api-1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.body.url || 'https://example.com' }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 10000,
+          "allowUnauthorizedCerts": true
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        430,
+        300
+      ],
+      "id": "roast-web-api-http",
+      "name": "Fetch Website",
+      "onError": "continueRegularOutput",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the fetched HTML\nconst inputUrl = $('Webhook').first().json.body.url || 'https://example.com';\nlet html = '';\nlet statusCode = 0;\nlet fetchSuccess = false;\n\ntry {\n  const httpData = $input.first().json;\n  // The HTTP Request node with full response returns body, headers, statusCode\n  if (httpData.body) {\n    html = typeof httpData.body === 'string' ? httpData.body : JSON.stringify(httpData.body);\n    statusCode = httpData.statusCode || 200;\n    fetchSuccess = true;\n  } else if (httpData.data) {\n    html = typeof httpData.data === 'string' ? httpData.data : JSON.stringify(httpData.data);\n    statusCode = 200;\n    fetchSuccess = true;\n  } else if (typeof httpData === 'string') {\n    html = httpData;\n    statusCode = 200;\n    fetchSuccess = true;\n  } else {\n    // Maybe the response is the HTML directly in one of the fields\n    html = JSON.stringify(httpData).substring(0, 5000);\n    fetchSuccess = true;\n  }\n} catch (e) {\n  html = '';\n  fetchSuccess = false;\n}\n\nif (!fetchSuccess || html.length < 50) {\n  return [{\n    json: {\n      url: inputUrl,\n      title: 'Could not fetch - site may be down or blocking requests',\n      description: 'Failed to fetch website data',\n      h1: 'N/A',\n      statusCode: statusCode,\n      stats: { images: 0, links: 0, scripts: 0, styles: 0, divs: 0, pageSizeKB: 0 },\n      tech: 'Unknown',\n      mobileReady: false,\n      fetchSuccess: false\n    }\n  }];\n}\n\n// Extract basic info with regex\nconst titleMatch = html.match(/<title[^>]*>(.*?)<\\/title>/is);\nconst title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, '').trim().substring(0, 200) : 'No title found';\n\nconst descMatch = html.match(/<meta[^>]*name=[\"']description[\"'][^>]*content=[\"'](.*?)[\"']/is) \n  || html.match(/<meta[^>]*content=[\"'](.*?)[\"'][^>]*name=[\"']description[\"']/is);\nconst description = descMatch ? descMatch[1].trim().substring(0, 300) : 'No meta description';\n\nconst h1Match = html.match(/<h1[^>]*>(.*?)<\\/h1>/is);\nconst h1 = h1Match ? h1Match[1].replace(/<[^>]+>/g, '').trim().substring(0, 200) : 'No H1 tag found';\n\n// Count elements\nconst imgCount = (html.match(/<img/gi) || []).length;\nconst linkCount = (html.match(/<a\\s/gi) || []).length;\nconst scriptCount = (html.match(/<script/gi) || []).length;\nconst styleCount = (html.match(/<style/gi) || []).length;\nconst divCount = (html.match(/<div/gi) || []).length;\nconst formCount = (html.match(/<form/gi) || []).length;\nconst buttonCount = (html.match(/<button/gi) || []).length;\n\n// Check for common frameworks/technologies\nconst techStack = [];\nif (html.includes('react') || html.includes('__next') || html.includes('_next')) techStack.push('React/Next.js');\nif (html.includes('wp-content') || html.includes('wordpress')) techStack.push('WordPress');\nif (html.includes('bootstrap')) techStack.push('Bootstrap');\nif (html.includes('tailwind')) techStack.push('Tailwind CSS');\nif (html.includes('jquery') || html.includes('jQuery')) techStack.push('jQuery');\nif (html.includes('vue') || html.includes('__vue')) techStack.push('Vue.js');\nif (html.includes('angular')) techStack.push('Angular');\nif (html.includes('shopify')) techStack.push('Shopify');\nif (html.includes('squarespace')) techStack.push('Squarespace');\nif (html.includes('wix')) techStack.push('Wix');\n\nconst hasViewport = html.includes('viewport');\nconst pageSize = Math.round(html.length / 1024);\n\n// Check for some fun things\nconst hasInlineStyles = (html.match(/style=\"/gi) || []).length;\nconst hasFavicon = html.includes('favicon') || html.includes('icon');\nconst hasOpenGraph = html.includes('og:');\n\nreturn [{\n  json: {\n    url: inputUrl,\n    title: title,\n    description: description,\n    h1: h1,\n    statusCode: statusCode,\n    stats: {\n      images: imgCount,\n      links: linkCount,\n      scripts: scriptCount,\n      styles: styleCount,\n      divs: divCount,\n      forms: formCount,\n      buttons: buttonCount,\n      pageSizeKB: pageSize,\n      inlineStyles: hasInlineStyles\n    },\n    tech: techStack.length > 0 ? techStack.join(', ') : 'Could not detect specific frameworks',\n    mobileReady: hasViewport,\n    hasFavicon: hasFavicon,\n    hasOpenGraph: hasOpenGraph,\n    fetchSuccess: true\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        300
+      ],
+      "id": "roast-web-api-parse",
+      "name": "Parse Website Info"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Roast this website based on the following data:\n\n**URL:** {{ $json.url }}\n**Title:** {{ $json.title }}\n**Meta Description:** {{ $json.description }}\n**Main Heading (H1):** {{ $json.h1 }}\n**HTTP Status:** {{ $json.statusCode }}\n**Mobile Ready:** {{ $json.mobileReady }}\n**Has Favicon:** {{ $json.hasFavicon }}\n**Has Open Graph Tags:** {{ $json.hasOpenGraph }}\n**Detected Tech:** {{ $json.tech }}\n**Page Size:** {{ $json.stats.pageSizeKB }} KB\n**Element Counts:**\n- Images: {{ $json.stats.images }}\n- Links: {{ $json.stats.links }}  \n- Scripts: {{ $json.stats.scripts }}\n- Style blocks: {{ $json.stats.styles }}\n- Inline styles: {{ $json.stats.inlineStyles }}\n- Divs: {{ $json.stats.divs }}\n- Forms: {{ $json.stats.forms }}\n- Buttons: {{ $json.stats.buttons }}\n**Fetch Success:** {{ $json.fetchSuccess }}\n\nNow roast this website! Make it hilarious and specific to the data above.",
+        "options": {
+          "systemMessage": "You are the world's funniest and most savage website design critic. You're a combination of Gordon Ramsay, a senior UX designer, and a stand-up comedian. Your job is to roast websites based on the information provided about them.\n\nYour roast MUST follow this EXACT structure:\n\n## First Impression\nYour visceral, gut reaction to this website. Be dramatic and funny.\n\n## The Charges\nList 3-5 specific \"design crimes\" as numbered charges. Each charge should be a funny one-liner, like:\n1. **Charge: [Crime Name]** - [Funny description of what's wrong]\n\nBe creative with charge names like \"Assault with a Deadly Font\", \"First-Degree Navigation Confusion\", \"Unlawful Use of Gradients\", \"Reckless Whitespace Endangerment\", etc.\n\n## The Roast\nGo deeper into 2-3 of the worst offenses. Use metaphors, pop culture references, and design humor. Comment on:\n- URL structure and domain choice\n- The implied content/purpose of the site\n- Potential design issues based on the meta description and title\n- Any other observations from the provided data\n\n## Design Crime Score: X/10\nGive a score from 1-10 where:\n- 1-3: \"Actually decent, you got lucky\"\n- 4-6: \"The design jury is still deliberating\"  \n- 7-9: \"Guilty on all counts\"\n- 10: \"Life sentence in design prison\"\n\nInclude a funny verdict line after the score.\n\n## One Genuine Compliment\nEnd with ONE genuinely nice thing about the website. It can be slightly backhanded but should contain real praise.\n\nIMPORTANT RULES:\n- Be hilarious but NOT mean-spirited or cruel\n- Focus on design/UX critique wrapped in humor\n- Never make fun of the website's actual mission or the people behind it\n- If it's a personal site, be extra gentle with the compliment\n- Keep the total response between 300-500 words\n- Make it entertaining enough that people want to share it\n- Use emojis sparingly for comedic effect"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        300
+      ],
+      "id": "roast-web-api-agent",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        900,
+        520
+      ],
+      "id": "roast-web-api-openai",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Your Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ \"roast\": $json.output }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        300
+      ],
+      "id": "roast-web-api-resp",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Fetch Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Website": {
+      "main": [
+        [
+          {
+            "node": "Parse Website Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Website Info": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "activeVersionId": "d15af64a-81e1-4e40-8482-42c1d5614c8e",
+  "versionCounter": 8,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-02T01:33:57.186Z",
+      "createdAt": "2026-03-02T01:33:57.186Z",
+      "role": "workflow:owner",
+      "workflowId": "zFkfowy5u6NG0D4b",
+      "projectId": "jISBlT19NO0fn5mT",
+      "project": {
+        "updatedAt": "2025-11-19T23:58:51.301Z",
+        "createdAt": "2025-11-19T23:57:07.759Z",
+        "id": "jISBlT19NO0fn5mT",
+        "name": "Armani Cunningham <hamstudios101@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-03-02T01:35:56.493Z",
+    "createdAt": "2026-03-02T01:35:56.493Z",
+    "versionId": "d15af64a-81e1-4e40-8482-42c1d5614c8e",
+    "workflowId": "zFkfowy5u6NG0D4b",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "roast-website-api",
+          "responseMode": "responseNode",
+          "httpMethod": "POST",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "Content-Type"
+                },
+                {
+                  "name": "Access-Control-Allow-Methods",
+                  "value": "POST, OPTIONS"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          200,
+          300
+        ],
+        "id": "roast-web-api-wh",
+        "name": "Webhook",
+        "webhookId": "roast-web-api-1"
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.body.url || 'https://example.com' }}",
+          "options": {
+            "response": {
+              "response": {
+                "fullResponse": true,
+                "responseFormat": "text"
+              }
+            },
+            "timeout": 10000,
+            "allowUnauthorizedCerts": true
+          },
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "User-Agent",
+                "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+              },
+              {
+                "name": "Accept",
+                "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          430,
+          300
+        ],
+        "id": "roast-web-api-http",
+        "name": "Fetch Website",
+        "onError": "continueRegularOutput",
+        "retryOnFail": false
+      },
+      {
+        "parameters": {
+          "jsCode": "// Parse the fetched HTML\nconst inputUrl = $('Webhook').first().json.body.url || 'https://example.com';\nlet html = '';\nlet statusCode = 0;\nlet fetchSuccess = false;\n\ntry {\n  const httpData = $input.first().json;\n  // The HTTP Request node with full response returns body, headers, statusCode\n  if (httpData.body) {\n    html = typeof httpData.body === 'string' ? httpData.body : JSON.stringify(httpData.body);\n    statusCode = httpData.statusCode || 200;\n    fetchSuccess = true;\n  } else if (httpData.data) {\n    html = typeof httpData.data === 'string' ? httpData.data : JSON.stringify(httpData.data);\n    statusCode = 200;\n    fetchSuccess = true;\n  } else if (typeof httpData === 'string') {\n    html = httpData;\n    statusCode = 200;\n    fetchSuccess = true;\n  } else {\n    // Maybe the response is the HTML directly in one of the fields\n    html = JSON.stringify(httpData).substring(0, 5000);\n    fetchSuccess = true;\n  }\n} catch (e) {\n  html = '';\n  fetchSuccess = false;\n}\n\nif (!fetchSuccess || html.length < 50) {\n  return [{\n    json: {\n      url: inputUrl,\n      title: 'Could not fetch - site may be down or blocking requests',\n      description: 'Failed to fetch website data',\n      h1: 'N/A',\n      statusCode: statusCode,\n      stats: { images: 0, links: 0, scripts: 0, styles: 0, divs: 0, pageSizeKB: 0 },\n      tech: 'Unknown',\n      mobileReady: false,\n      fetchSuccess: false\n    }\n  }];\n}\n\n// Extract basic info with regex\nconst titleMatch = html.match(/<title[^>]*>(.*?)<\\/title>/is);\nconst title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, '').trim().substring(0, 200) : 'No title found';\n\nconst descMatch = html.match(/<meta[^>]*name=[\"']description[\"'][^>]*content=[\"'](.*?)[\"']/is) \n  || html.match(/<meta[^>]*content=[\"'](.*?)[\"'][^>]*name=[\"']description[\"']/is);\nconst description = descMatch ? descMatch[1].trim().substring(0, 300) : 'No meta description';\n\nconst h1Match = html.match(/<h1[^>]*>(.*?)<\\/h1>/is);\nconst h1 = h1Match ? h1Match[1].replace(/<[^>]+>/g, '').trim().substring(0, 200) : 'No H1 tag found';\n\n// Count elements\nconst imgCount = (html.match(/<img/gi) || []).length;\nconst linkCount = (html.match(/<a\\s/gi) || []).length;\nconst scriptCount = (html.match(/<script/gi) || []).length;\nconst styleCount = (html.match(/<style/gi) || []).length;\nconst divCount = (html.match(/<div/gi) || []).length;\nconst formCount = (html.match(/<form/gi) || []).length;\nconst buttonCount = (html.match(/<button/gi) || []).length;\n\n// Check for common frameworks/technologies\nconst techStack = [];\nif (html.includes('react') || html.includes('__next') || html.includes('_next')) techStack.push('React/Next.js');\nif (html.includes('wp-content') || html.includes('wordpress')) techStack.push('WordPress');\nif (html.includes('bootstrap')) techStack.push('Bootstrap');\nif (html.includes('tailwind')) techStack.push('Tailwind CSS');\nif (html.includes('jquery') || html.includes('jQuery')) techStack.push('jQuery');\nif (html.includes('vue') || html.includes('__vue')) techStack.push('Vue.js');\nif (html.includes('angular')) techStack.push('Angular');\nif (html.includes('shopify')) techStack.push('Shopify');\nif (html.includes('squarespace')) techStack.push('Squarespace');\nif (html.includes('wix')) techStack.push('Wix');\n\nconst hasViewport = html.includes('viewport');\nconst pageSize = Math.round(html.length / 1024);\n\n// Check for some fun things\nconst hasInlineStyles = (html.match(/style=\"/gi) || []).length;\nconst hasFavicon = html.includes('favicon') || html.includes('icon');\nconst hasOpenGraph = html.includes('og:');\n\nreturn [{\n  json: {\n    url: inputUrl,\n    title: title,\n    description: description,\n    h1: h1,\n    statusCode: statusCode,\n    stats: {\n      images: imgCount,\n      links: linkCount,\n      scripts: scriptCount,\n      styles: styleCount,\n      divs: divCount,\n      forms: formCount,\n      buttons: buttonCount,\n      pageSizeKB: pageSize,\n      inlineStyles: hasInlineStyles\n    },\n    tech: techStack.length > 0 ? techStack.join(', ') : 'Could not detect specific frameworks',\n    mobileReady: hasViewport,\n    hasFavicon: hasFavicon,\n    hasOpenGraph: hasOpenGraph,\n    fetchSuccess: true\n  }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          660,
+          300
+        ],
+        "id": "roast-web-api-parse",
+        "name": "Parse Website Info"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Roast this website based on the following data:\n\n**URL:** {{ $json.url }}\n**Title:** {{ $json.title }}\n**Meta Description:** {{ $json.description }}\n**Main Heading (H1):** {{ $json.h1 }}\n**HTTP Status:** {{ $json.statusCode }}\n**Mobile Ready:** {{ $json.mobileReady }}\n**Has Favicon:** {{ $json.hasFavicon }}\n**Has Open Graph Tags:** {{ $json.hasOpenGraph }}\n**Detected Tech:** {{ $json.tech }}\n**Page Size:** {{ $json.stats.pageSizeKB }} KB\n**Element Counts:**\n- Images: {{ $json.stats.images }}\n- Links: {{ $json.stats.links }}  \n- Scripts: {{ $json.stats.scripts }}\n- Style blocks: {{ $json.stats.styles }}\n- Inline styles: {{ $json.stats.inlineStyles }}\n- Divs: {{ $json.stats.divs }}\n- Forms: {{ $json.stats.forms }}\n- Buttons: {{ $json.stats.buttons }}\n**Fetch Success:** {{ $json.fetchSuccess }}\n\nNow roast this website! Make it hilarious and specific to the data above.",
+          "options": {
+            "systemMessage": "You are the world's funniest and most savage website design critic. You're a combination of Gordon Ramsay, a senior UX designer, and a stand-up comedian. Your job is to roast websites based on the information provided about them.\n\nYour roast MUST follow this EXACT structure:\n\n## First Impression\nYour visceral, gut reaction to this website. Be dramatic and funny.\n\n## The Charges\nList 3-5 specific \"design crimes\" as numbered charges. Each charge should be a funny one-liner, like:\n1. **Charge: [Crime Name]** - [Funny description of what's wrong]\n\nBe creative with charge names like \"Assault with a Deadly Font\", \"First-Degree Navigation Confusion\", \"Unlawful Use of Gradients\", \"Reckless Whitespace Endangerment\", etc.\n\n## The Roast\nGo deeper into 2-3 of the worst offenses. Use metaphors, pop culture references, and design humor. Comment on:\n- URL structure and domain choice\n- The implied content/purpose of the site\n- Potential design issues based on the meta description and title\n- Any other observations from the provided data\n\n## Design Crime Score: X/10\nGive a score from 1-10 where:\n- 1-3: \"Actually decent, you got lucky\"\n- 4-6: \"The design jury is still deliberating\"  \n- 7-9: \"Guilty on all counts\"\n- 10: \"Life sentence in design prison\"\n\nInclude a funny verdict line after the score.\n\n## One Genuine Compliment\nEnd with ONE genuinely nice thing about the website. It can be slightly backhanded but should contain real praise.\n\nIMPORTANT RULES:\n- Be hilarious but NOT mean-spirited or cruel\n- Focus on design/UX critique wrapped in humor\n- Never make fun of the website's actual mission or the people behind it\n- If it's a personal site, be extra gentle with the compliment\n- Keep the total response between 300-500 words\n- Make it entertaining enough that people want to share it\n- Use emojis sparingly for comedic effect"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          900,
+          300
+        ],
+        "id": "roast-web-api-agent",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          900,
+          520
+        ],
+        "id": "roast-web-api-openai",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "xVvmBQ0k0B49oB4q",
+            "name": "n8n free OpenAI API credits"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ \"roast\": $json.output }) }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "Content-Type"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          1200,
+          300
+        ],
+        "id": "roast-web-api-resp",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Fetch Website",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Website": {
+        "main": [
+          [
+            {
+              "node": "Parse Website Info",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Website Info": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Armani Cunningham",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-02T01:35:56.718Z",
+        "id": 351,
+        "workflowId": "zFkfowy5u6NG0D4b",
+        "versionId": "d15af64a-81e1-4e40-8482-42c1d5614c8e",
+        "event": "activated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      },
+      {
+        "createdAt": "2026-03-02T01:35:57.383Z",
+        "id": 353,
+        "workflowId": "zFkfowy5u6NG0D4b",
+        "versionId": "d15af64a-81e1-4e40-8482-42c1d5614c8e",
+        "event": "activated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      },
+      {
+        "createdAt": "2026-03-02T01:35:56.620Z",
+        "id": 350,
+        "workflowId": "zFkfowy5u6NG0D4b",
+        "versionId": "d15af64a-81e1-4e40-8482-42c1d5614c8e",
+        "event": "deactivated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      },
+      {
+        "createdAt": "2026-03-02T01:35:57.272Z",
+        "id": 352,
+        "workflowId": "zFkfowy5u6NG0D4b",
+        "versionId": "d15af64a-81e1-4e40-8482-42c1d5614c8e",
+        "event": "deactivated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    ]
+  }
+}

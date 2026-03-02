@@ -1,0 +1,337 @@
+{
+  "name": "AI Regex Generator API",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "regex-api",
+        "responseMode": "responseNode",
+        "httpMethod": "POST",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        250,
+        300
+      ],
+      "id": "regex-api-wh",
+      "name": "Webhook",
+      "webhookId": "regex-api-1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a regex for the following request:\n\nDescription: {{ $json.body.description || \"No description provided\" }}\nPreferred Language: {{ $json.body.language || \"python\" }}\nUse Case: {{ $json.body.usecase || \"match\" }}",
+        "options": {
+          "systemMessage": "You are an expert regex engineer. Given a description of what the user wants to match, provide a comprehensive response with:\n\n1. **The Regex Pattern** - in a code block\n2. **Explanation** - break down each part of the regex clearly\n3. **Test Cases (Should Match)** - 3-5 examples that the regex correctly matches\n4. **Test Cases (Should NOT Match)** - 2-3 examples that the regex correctly rejects\n5. **Language-Specific Usage** - show how to use the regex in Python, JavaScript, and Java with actual code snippets\n\nKeep explanations clear, practical, and developer-friendly. Use markdown formatting. Always provide working, tested regex patterns.\n\nIf the user specifies a particular language, prioritize that language's syntax and idioms. If they specify a use case (match, validate, extract, replace), tailor the regex and examples accordingly."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        450,
+        300
+      ],
+      "id": "regex-ai-agent",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        500
+      ],
+      "id": "regex-openai-model",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Your Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ \"regex\": $json.output }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        650,
+        300
+      ],
+      "id": "regex-api-resp",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "activeVersionId": "114b967d-f85a-4b0d-859f-37ab96ea2bd5",
+  "versionCounter": 3,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-02T02:05:18.209Z",
+      "createdAt": "2026-03-02T02:05:18.209Z",
+      "role": "workflow:owner",
+      "workflowId": "EtcjeSjwWAHsfN08",
+      "projectId": "jISBlT19NO0fn5mT",
+      "project": {
+        "updatedAt": "2025-11-19T23:58:51.301Z",
+        "createdAt": "2025-11-19T23:57:07.759Z",
+        "id": "jISBlT19NO0fn5mT",
+        "name": "Armani Cunningham <hamstudios101@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-03-02T02:05:18.236Z",
+    "createdAt": "2026-03-02T02:05:18.236Z",
+    "versionId": "114b967d-f85a-4b0d-859f-37ab96ea2bd5",
+    "workflowId": "EtcjeSjwWAHsfN08",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "regex-api",
+          "responseMode": "responseNode",
+          "httpMethod": "POST",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "Content-Type"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          250,
+          300
+        ],
+        "id": "regex-api-wh",
+        "name": "Webhook",
+        "webhookId": "regex-api-1"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Generate a regex for the following request:\n\nDescription: {{ $json.body.description || \"No description provided\" }}\nPreferred Language: {{ $json.body.language || \"python\" }}\nUse Case: {{ $json.body.usecase || \"match\" }}",
+          "options": {
+            "systemMessage": "You are an expert regex engineer. Given a description of what the user wants to match, provide a comprehensive response with:\n\n1. **The Regex Pattern** - in a code block\n2. **Explanation** - break down each part of the regex clearly\n3. **Test Cases (Should Match)** - 3-5 examples that the regex correctly matches\n4. **Test Cases (Should NOT Match)** - 2-3 examples that the regex correctly rejects\n5. **Language-Specific Usage** - show how to use the regex in Python, JavaScript, and Java with actual code snippets\n\nKeep explanations clear, practical, and developer-friendly. Use markdown formatting. Always provide working, tested regex patterns.\n\nIf the user specifies a particular language, prioritize that language's syntax and idioms. If they specify a use case (match, validate, extract, replace), tailor the regex and examples accordingly."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          450,
+          300
+        ],
+        "id": "regex-ai-agent",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          500,
+          500
+        ],
+        "id": "regex-openai-model",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "xVvmBQ0k0B49oB4q",
+            "name": "n8n free OpenAI API credits"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ \"regex\": $json.output }) }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "Content-Type"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          650,
+          300
+        ],
+        "id": "regex-api-resp",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Armani Cunningham",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-02T02:05:18.834Z",
+        "id": 359,
+        "workflowId": "EtcjeSjwWAHsfN08",
+        "versionId": "114b967d-f85a-4b0d-859f-37ab96ea2bd5",
+        "event": "activated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    ]
+  }
+}

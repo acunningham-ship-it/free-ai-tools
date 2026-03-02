@@ -1,0 +1,337 @@
+{
+  "name": "Roast My Code API",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "roast-code-api",
+        "responseMode": "responseNode",
+        "httpMethod": "POST",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ],
+      "id": "webhook-node",
+      "name": "Webhook",
+      "webhookId": "roast-code-api-wh"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Roast the following code (roast level: {{ $json.body.level || \"medium\" }}):\n\nLanguage: {{ $json.body.language || \"auto-detect\" }}\n\nCode:\n```\n{{ $json.body.code || \"// No code provided\" }}\n```",
+        "options": {
+          "systemMessage": "You are a hilariously savage code roaster. You're like a combination of a senior developer and a stand-up comedian. Your job is to roast submitted code in the most entertaining way possible while still being somewhat educational.\n\nYour roast should include:\n1. **First Impression** - Your visceral reaction to seeing this code\n2. **The Roast** - Go through the code and roast every questionable decision. Be creative, use metaphors, pop culture references, and programming humor.\n3. **Savage Score** - Rate the code on a scale of \"Gordon Ramsay would cry\" to \"Actually not terrible\"\n4. **One Nice Thing** - Say ONE genuinely nice thing (but make it backhanded if possible)\n5. **What They Should Actually Do** - Brief, real advice hidden in humor\n\nBe funny but not mean-spirited. The goal is entertainment + education. Use emojis sparingly for effect."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        500,
+        300
+      ],
+      "id": "ai-agent-node",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        500
+      ],
+      "id": "openai-model-node",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Your Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ \"roast\": $json.output }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        300
+      ],
+      "id": "respond-node",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "activeVersionId": "001adbdb-2903-4fbc-bbe9-2854fc840f9d",
+  "versionCounter": 14,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-01T23:54:10.255Z",
+      "createdAt": "2026-03-01T23:54:10.255Z",
+      "role": "workflow:owner",
+      "workflowId": "MSNYiwImRsmkc3Ko",
+      "projectId": "jISBlT19NO0fn5mT",
+      "project": {
+        "updatedAt": "2025-11-19T23:58:51.301Z",
+        "createdAt": "2025-11-19T23:57:07.759Z",
+        "id": "jISBlT19NO0fn5mT",
+        "name": "Armani Cunningham <hamstudios101@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-03-02T01:03:41.453Z",
+    "createdAt": "2026-03-02T01:03:41.453Z",
+    "versionId": "001adbdb-2903-4fbc-bbe9-2854fc840f9d",
+    "workflowId": "MSNYiwImRsmkc3Ko",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "roast-code-api",
+          "responseMode": "responseNode",
+          "httpMethod": "POST",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "Content-Type"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          200,
+          300
+        ],
+        "id": "webhook-node",
+        "name": "Webhook",
+        "webhookId": "roast-code-api-wh"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Roast the following code (roast level: {{ $json.body.level || \"medium\" }}):\n\nLanguage: {{ $json.body.language || \"auto-detect\" }}\n\nCode:\n```\n{{ $json.body.code || \"// No code provided\" }}\n```",
+          "options": {
+            "systemMessage": "You are a hilariously savage code roaster. You're like a combination of a senior developer and a stand-up comedian. Your job is to roast submitted code in the most entertaining way possible while still being somewhat educational.\n\nYour roast should include:\n1. **First Impression** - Your visceral reaction to seeing this code\n2. **The Roast** - Go through the code and roast every questionable decision. Be creative, use metaphors, pop culture references, and programming humor.\n3. **Savage Score** - Rate the code on a scale of \"Gordon Ramsay would cry\" to \"Actually not terrible\"\n4. **One Nice Thing** - Say ONE genuinely nice thing (but make it backhanded if possible)\n5. **What They Should Actually Do** - Brief, real advice hidden in humor\n\nBe funny but not mean-spirited. The goal is entertainment + education. Use emojis sparingly for effect."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          500,
+          300
+        ],
+        "id": "ai-agent-node",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          500,
+          500
+        ],
+        "id": "openai-model-node",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "xVvmBQ0k0B49oB4q",
+            "name": "n8n free OpenAI API credits"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ \"roast\": $json.output }) }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "Content-Type"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          800,
+          300
+        ],
+        "id": "respond-node",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Armani Cunningham",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-02T01:03:41.892Z",
+        "id": 347,
+        "workflowId": "MSNYiwImRsmkc3Ko",
+        "versionId": "001adbdb-2903-4fbc-bbe9-2854fc840f9d",
+        "event": "activated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    ]
+  }
+}

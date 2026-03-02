@@ -1,0 +1,337 @@
+{
+  "name": "LinkedIn Writer API",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "linkedin-api",
+        "responseMode": "responseNode",
+        "httpMethod": "POST",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ],
+      "id": "webhook-node",
+      "name": "Webhook",
+      "webhookId": "linkedin-api-wh"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a LinkedIn post with the following parameters:\n- Topic: {{ $json.body.topic || \"professional growth\" }}\n- Tone: {{ $json.body.tone || \"inspirational\" }}\n- Length: {{ $json.body.length || \"medium\" }}",
+        "options": {
+          "systemMessage": "You are a LinkedIn content expert and social media strategist. You create engaging, professional LinkedIn posts that drive engagement.\n\nBased on the input:\n- Topic: What the post should be about\n- Tone: The desired tone (inspirational, educational, storytelling, controversial, etc.)\n- Length: How long the post should be (short, medium, long)\n\nWrite a compelling LinkedIn post. Include:\n- An attention-grabbing hook in the first line\n- Proper formatting with line breaks\n- Relevant hashtags at the end (3-5)\n- A call to action\n\nReturn ONLY the post content, ready to copy-paste to LinkedIn."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        500,
+        300
+      ],
+      "id": "ai-agent-node",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        500
+      ],
+      "id": "openai-model-node",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Your Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ \"post\": $json.output }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        300
+      ],
+      "id": "respond-node",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "activeVersionId": "c1312ef6-4dd5-467c-9289-52465a53350a",
+  "versionCounter": 14,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-01T23:54:06.103Z",
+      "createdAt": "2026-03-01T23:54:06.103Z",
+      "role": "workflow:owner",
+      "workflowId": "hxPHGRMVfa0p7b5t",
+      "projectId": "jISBlT19NO0fn5mT",
+      "project": {
+        "updatedAt": "2025-11-19T23:58:51.301Z",
+        "createdAt": "2025-11-19T23:57:07.759Z",
+        "id": "jISBlT19NO0fn5mT",
+        "name": "Armani Cunningham <hamstudios101@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-03-02T01:03:34.416Z",
+    "createdAt": "2026-03-02T01:03:34.416Z",
+    "versionId": "c1312ef6-4dd5-467c-9289-52465a53350a",
+    "workflowId": "hxPHGRMVfa0p7b5t",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "linkedin-api",
+          "responseMode": "responseNode",
+          "httpMethod": "POST",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "Content-Type"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          200,
+          300
+        ],
+        "id": "webhook-node",
+        "name": "Webhook",
+        "webhookId": "linkedin-api-wh"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Write a LinkedIn post with the following parameters:\n- Topic: {{ $json.body.topic || \"professional growth\" }}\n- Tone: {{ $json.body.tone || \"inspirational\" }}\n- Length: {{ $json.body.length || \"medium\" }}",
+          "options": {
+            "systemMessage": "You are a LinkedIn content expert and social media strategist. You create engaging, professional LinkedIn posts that drive engagement.\n\nBased on the input:\n- Topic: What the post should be about\n- Tone: The desired tone (inspirational, educational, storytelling, controversial, etc.)\n- Length: How long the post should be (short, medium, long)\n\nWrite a compelling LinkedIn post. Include:\n- An attention-grabbing hook in the first line\n- Proper formatting with line breaks\n- Relevant hashtags at the end (3-5)\n- A call to action\n\nReturn ONLY the post content, ready to copy-paste to LinkedIn."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          500,
+          300
+        ],
+        "id": "ai-agent-node",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          500,
+          500
+        ],
+        "id": "openai-model-node",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "xVvmBQ0k0B49oB4q",
+            "name": "n8n free OpenAI API credits"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ \"post\": $json.output }) }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "Content-Type"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          800,
+          300
+        ],
+        "id": "respond-node",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Armani Cunningham",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-02T01:03:34.860Z",
+        "id": 343,
+        "workflowId": "hxPHGRMVfa0p7b5t",
+        "versionId": "c1312ef6-4dd5-467c-9289-52465a53350a",
+        "event": "activated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    ]
+  }
+}

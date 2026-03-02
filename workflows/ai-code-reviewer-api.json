@@ -1,0 +1,337 @@
+{
+  "name": "Code Review API",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "code-review-api",
+        "responseMode": "responseNode",
+        "httpMethod": "POST",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ],
+      "id": "webhook-node",
+      "name": "Webhook",
+      "webhookId": "code-review-api-wh"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Review the following code:\n\nLanguage: {{ $json.body.language || \"auto-detect\" }}\n\nCode:\n```\n{{ $json.body.code || \"// No code provided\" }}\n```",
+        "options": {
+          "systemMessage": "You are a senior software engineer and expert code reviewer with 15+ years of experience. You provide thorough, constructive code reviews.\n\nReview the submitted code and provide:\n1. **Overall Assessment** - Brief summary of code quality\n2. **Bugs & Issues** - Any bugs, potential errors, or security vulnerabilities\n3. **Code Quality** - Readability, naming conventions, structure\n4. **Performance** - Any performance concerns or optimizations\n5. **Best Practices** - Adherence to language-specific best practices\n6. **Suggestions** - Specific improvements with code examples\n7. **Rating** - Score out of 10\n\nBe specific, reference line numbers or code snippets, and provide actionable feedback. Be constructive, not harsh."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        500,
+        300
+      ],
+      "id": "ai-agent-node",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        500
+      ],
+      "id": "openai-model-node",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Your Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ \"review\": $json.output }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        300
+      ],
+      "id": "respond-node",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "activeVersionId": "c4bb1888-74fa-4eac-8f7e-145398de9909",
+  "versionCounter": 14,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-01T23:54:08.272Z",
+      "createdAt": "2026-03-01T23:54:08.272Z",
+      "role": "workflow:owner",
+      "workflowId": "ariNpa3xy29ussN5",
+      "projectId": "jISBlT19NO0fn5mT",
+      "project": {
+        "updatedAt": "2025-11-19T23:58:51.301Z",
+        "createdAt": "2025-11-19T23:57:07.759Z",
+        "id": "jISBlT19NO0fn5mT",
+        "name": "Armani Cunningham <hamstudios101@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-03-02T01:03:37.983Z",
+    "createdAt": "2026-03-02T01:03:37.983Z",
+    "versionId": "c4bb1888-74fa-4eac-8f7e-145398de9909",
+    "workflowId": "ariNpa3xy29ussN5",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "code-review-api",
+          "responseMode": "responseNode",
+          "httpMethod": "POST",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "Content-Type"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          200,
+          300
+        ],
+        "id": "webhook-node",
+        "name": "Webhook",
+        "webhookId": "code-review-api-wh"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Review the following code:\n\nLanguage: {{ $json.body.language || \"auto-detect\" }}\n\nCode:\n```\n{{ $json.body.code || \"// No code provided\" }}\n```",
+          "options": {
+            "systemMessage": "You are a senior software engineer and expert code reviewer with 15+ years of experience. You provide thorough, constructive code reviews.\n\nReview the submitted code and provide:\n1. **Overall Assessment** - Brief summary of code quality\n2. **Bugs & Issues** - Any bugs, potential errors, or security vulnerabilities\n3. **Code Quality** - Readability, naming conventions, structure\n4. **Performance** - Any performance concerns or optimizations\n5. **Best Practices** - Adherence to language-specific best practices\n6. **Suggestions** - Specific improvements with code examples\n7. **Rating** - Score out of 10\n\nBe specific, reference line numbers or code snippets, and provide actionable feedback. Be constructive, not harsh."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          500,
+          300
+        ],
+        "id": "ai-agent-node",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          500,
+          500
+        ],
+        "id": "openai-model-node",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "xVvmBQ0k0B49oB4q",
+            "name": "n8n free OpenAI API credits"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ \"review\": $json.output }) }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "Content-Type"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          800,
+          300
+        ],
+        "id": "respond-node",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Armani Cunningham",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-02T01:03:38.373Z",
+        "id": 345,
+        "workflowId": "ariNpa3xy29ussN5",
+        "versionId": "c4bb1888-74fa-4eac-8f7e-145398de9909",
+        "event": "activated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    ]
+  }
+}

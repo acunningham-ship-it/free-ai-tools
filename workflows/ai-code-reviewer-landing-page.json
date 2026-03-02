@@ -1,0 +1,167 @@
+{
+  "name": "AI Code Reviewer",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "code-review",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        250,
+        300
+      ],
+      "id": "code-review-1-wh",
+      "name": "Webhook",
+      "webhookId": "code-review-1"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>AI Code Reviewer - Free Code Review Tool</title>\n<style>\n*{margin:0;padding:0;box-sizing:border-box}\nbody{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh}\n.container{max-width:700px;margin:0 auto;padding:20px}\n.header{text-align:center;padding:30px 20px;background:linear-gradient(135deg,#11998e 0%,#38ef7d 100%);border-radius:20px;margin-bottom:25px}\n.header h1{font-size:2em;color:#fff;margin-bottom:8px}\n.header p{color:rgba(255,255,255,0.9);font-size:1em}\n.back-link{display:inline-block;color:#667eea;text-decoration:none;margin-bottom:15px;font-size:0.9em}\n.back-link:hover{text-decoration:underline}\n.form-card{background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:25px;margin-bottom:20px}\nlabel{display:block;color:#ccc;font-size:0.9em;margin-bottom:6px;font-weight:500}\nselect,textarea,input[type=\"text\"]{width:100%;padding:10px 14px;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#e0e0e0;font-size:0.95em;margin-bottom:15px;font-family:inherit}\nselect:focus,textarea:focus,input:focus{outline:none;border-color:#667eea}\ntextarea{min-height:120px;resize:vertical}\nbutton[type=\"submit\"]{width:100%;padding:12px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;font-size:1em;font-weight:bold;cursor:pointer;transition:all 0.3s}\nbutton[type=\"submit\"]:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(102,126,234,0.3)}\n.result{background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;margin-top:15px;white-space:pre-wrap;line-height:1.6;display:none}\n.loading{text-align:center;padding:20px;display:none}\n.loading::after{content:'Generating...';color:#667eea;font-size:1.1em}\n.footer{text-align:center;padding:15px;color:#666;font-size:0.8em;margin-top:10px}\n.footer a{color:#667eea;text-decoration:none}\n\ntextarea#code{font-family:'Courier New',monospace;font-size:0.85em;min-height:200px;tab-size:2}\n</style>\n</head><body>\n<div class=\"container\">\n<a href=\"https://crazeemedia.app.n8n.cloud/webhook/ai-tools\" class=\"back-link\">&larr; Back to AI Tools Hub</a>\n<div class=\"header\"><h1>&#128269; AI Code Reviewer</h1><p>Get instant AI-powered code reviews</p></div>\n\n<div style=\"background:linear-gradient(135deg,#f093fb 0%,#f5576c 50%,#ff9a56 100%);border-radius:14px;padding:18px 22px;margin:20px 0;position:relative;overflow:hidden\">\n<div style=\"display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:relative;z-index:1\">\n<div>\n<strong style=\"color:#fff;font-size:1.05em\">&#11088; Get the n8n AI Templates Bundle</strong>\n<p style=\"color:rgba(255,255,255,0.9);font-size:0.85em;margin-top:3px\">Production-ready workflows including this tool and more - $4.99</p>\n</div>\n<a href=\"https://payhip.com/b/sCTo9\" target=\"_blank\" style=\"background:rgba(255,255,255,0.95);color:#e0457b;padding:8px 20px;border-radius:20px;text-decoration:none;font-weight:bold;font-size:0.9em;white-space:nowrap\">Get Templates</a>\n</div>\n</div>\n\n<div class=\"form-card\">\n<form id=\"reviewForm\" onsubmit=\"generate(event)\">\n<label>Programming Language</label>\n<select name=\"language\" id=\"language\">\n<option value=\"javascript\">JavaScript</option>\n<option value=\"python\">Python</option>\n<option value=\"typescript\">TypeScript</option>\n<option value=\"java\">Java</option>\n<option value=\"cpp\">C++</option>\n<option value=\"csharp\">C#</option>\n<option value=\"go\">Go</option>\n<option value=\"rust\">Rust</option>\n<option value=\"php\">PHP</option>\n<option value=\"ruby\">Ruby</option>\n<option value=\"swift\">Swift</option>\n<option value=\"kotlin\">Kotlin</option>\n<option value=\"sql\">SQL</option>\n<option value=\"html-css\">HTML/CSS</option>\n<option value=\"bash\">Bash</option>\n<option value=\"other\">Other</option>\n</select>\n<label>Paste Your Code</label>\n<textarea name=\"code\" id=\"code\" placeholder=\"Paste your code here for review...\" required></textarea>\n<button type=\"submit\">Review My Code</button>\n</form>\n<div class=\"loading\" id=\"loading\"></div>\n<div class=\"result\" id=\"result\"></div>\n</div>\n\n<div style=\"text-align:center;padding:18px;background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:14px;margin-top:20px\">\n<p style=\"color:#aaa;font-size:0.85em;margin-bottom:8px\">&#9829; Like this tool? Check out our premium templates and resources</p>\n<a href=\"https://payhip.com/ArmanisDevTools\" target=\"_blank\" style=\"color:#667eea;text-decoration:none;font-weight:bold;font-size:0.9em\">Visit Our Store</a>\n<span style=\"color:#444;margin:0 8px\">|</span>\n<a href=\"https://crazeemedia.app.n8n.cloud/webhook/ai-tools\" style=\"color:#667eea;text-decoration:none;font-size:0.9em\">All Tools</a>\n<span style=\"color:#444;margin:0 8px\">|</span>\n<a href=\"https://ko-fi.com/armanidev\" target=\"_blank\" style=\"color:#667eea;text-decoration:none;font-size:0.9em\">Support on Ko-fi</a>\n</div>\n\n<div class=\"footer\"><p>Built by <a href=\"https://github.com/acunningham-ship-it\">Armani</a> | <a href=\"https://payhip.com/ArmanisDevTools\">Shop Templates</a></p></div>\n</div>\n<script>\nasync function generate(e) {\n  e.preventDefault();\n  const loading = document.getElementById('loading');\n  const result = document.getElementById('result');\n  loading.style.display = 'block';\n  result.style.display = 'none';\n  try {\n    const resp = await fetch('https://crazeemedia.app.n8n.cloud/webhook/code-review-api', {\n      method: 'POST',\n      headers: {'Content-Type': 'application/json'},\n      body: JSON.stringify({\n        language: document.getElementById('language').value,\n        code: document.getElementById('code').value\n      })\n    });\n    const data = await resp.json();\n    result.textContent = data.review || data.text || data.output || JSON.stringify(data);\n    result.style.display = 'block';\n  } catch(err) {\n    result.textContent = 'Error: ' + err.message;\n    result.style.display = 'block';\n  }\n  loading.style.display = 'none';\n}\n</script>\n</body></html>",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        500,
+        300
+      ],
+      "id": "code-review-1-resp",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "activeVersionId": "42ddbef3-ffe7-4b1b-a1b2-a4a09923db25",
+  "versionCounter": 3,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-01T23:53:27.760Z",
+      "createdAt": "2026-03-01T23:53:27.760Z",
+      "role": "workflow:owner",
+      "workflowId": "QYhrBIOAPItDkFUd",
+      "projectId": "jISBlT19NO0fn5mT",
+      "project": {
+        "updatedAt": "2025-11-19T23:58:51.301Z",
+        "createdAt": "2025-11-19T23:57:07.759Z",
+        "id": "jISBlT19NO0fn5mT",
+        "name": "Armani Cunningham <hamstudios101@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-03-01T23:53:27.787Z",
+    "createdAt": "2026-03-01T23:53:27.787Z",
+    "versionId": "42ddbef3-ffe7-4b1b-a1b2-a4a09923db25",
+    "workflowId": "QYhrBIOAPItDkFUd",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "code-review",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          250,
+          300
+        ],
+        "id": "code-review-1-wh",
+        "name": "Webhook",
+        "webhookId": "code-review-1"
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "=<!DOCTYPE html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>AI Code Reviewer - Free Code Review Tool</title>\n<style>\n*{margin:0;padding:0;box-sizing:border-box}\nbody{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh}\n.container{max-width:700px;margin:0 auto;padding:20px}\n.header{text-align:center;padding:30px 20px;background:linear-gradient(135deg,#11998e 0%,#38ef7d 100%);border-radius:20px;margin-bottom:25px}\n.header h1{font-size:2em;color:#fff;margin-bottom:8px}\n.header p{color:rgba(255,255,255,0.9);font-size:1em}\n.back-link{display:inline-block;color:#667eea;text-decoration:none;margin-bottom:15px;font-size:0.9em}\n.back-link:hover{text-decoration:underline}\n.form-card{background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:25px;margin-bottom:20px}\nlabel{display:block;color:#ccc;font-size:0.9em;margin-bottom:6px;font-weight:500}\nselect,textarea,input[type=\"text\"]{width:100%;padding:10px 14px;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#e0e0e0;font-size:0.95em;margin-bottom:15px;font-family:inherit}\nselect:focus,textarea:focus,input:focus{outline:none;border-color:#667eea}\ntextarea{min-height:120px;resize:vertical}\nbutton[type=\"submit\"]{width:100%;padding:12px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;font-size:1em;font-weight:bold;cursor:pointer;transition:all 0.3s}\nbutton[type=\"submit\"]:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(102,126,234,0.3)}\n.result{background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;margin-top:15px;white-space:pre-wrap;line-height:1.6;display:none}\n.loading{text-align:center;padding:20px;display:none}\n.loading::after{content:'Generating...';color:#667eea;font-size:1.1em}\n.footer{text-align:center;padding:15px;color:#666;font-size:0.8em;margin-top:10px}\n.footer a{color:#667eea;text-decoration:none}\n\ntextarea#code{font-family:'Courier New',monospace;font-size:0.85em;min-height:200px;tab-size:2}\n</style>\n</head><body>\n<div class=\"container\">\n<a href=\"https://crazeemedia.app.n8n.cloud/webhook/ai-tools\" class=\"back-link\">&larr; Back to AI Tools Hub</a>\n<div class=\"header\"><h1>&#128269; AI Code Reviewer</h1><p>Get instant AI-powered code reviews</p></div>\n\n<div style=\"background:linear-gradient(135deg,#f093fb 0%,#f5576c 50%,#ff9a56 100%);border-radius:14px;padding:18px 22px;margin:20px 0;position:relative;overflow:hidden\">\n<div style=\"display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:relative;z-index:1\">\n<div>\n<strong style=\"color:#fff;font-size:1.05em\">&#11088; Get the n8n AI Templates Bundle</strong>\n<p style=\"color:rgba(255,255,255,0.9);font-size:0.85em;margin-top:3px\">Production-ready workflows including this tool and more - $4.99</p>\n</div>\n<a href=\"https://payhip.com/b/sCTo9\" target=\"_blank\" style=\"background:rgba(255,255,255,0.95);color:#e0457b;padding:8px 20px;border-radius:20px;text-decoration:none;font-weight:bold;font-size:0.9em;white-space:nowrap\">Get Templates</a>\n</div>\n</div>\n\n<div class=\"form-card\">\n<form id=\"reviewForm\" onsubmit=\"generate(event)\">\n<label>Programming Language</label>\n<select name=\"language\" id=\"language\">\n<option value=\"javascript\">JavaScript</option>\n<option value=\"python\">Python</option>\n<option value=\"typescript\">TypeScript</option>\n<option value=\"java\">Java</option>\n<option value=\"cpp\">C++</option>\n<option value=\"csharp\">C#</option>\n<option value=\"go\">Go</option>\n<option value=\"rust\">Rust</option>\n<option value=\"php\">PHP</option>\n<option value=\"ruby\">Ruby</option>\n<option value=\"swift\">Swift</option>\n<option value=\"kotlin\">Kotlin</option>\n<option value=\"sql\">SQL</option>\n<option value=\"html-css\">HTML/CSS</option>\n<option value=\"bash\">Bash</option>\n<option value=\"other\">Other</option>\n</select>\n<label>Paste Your Code</label>\n<textarea name=\"code\" id=\"code\" placeholder=\"Paste your code here for review...\" required></textarea>\n<button type=\"submit\">Review My Code</button>\n</form>\n<div class=\"loading\" id=\"loading\"></div>\n<div class=\"result\" id=\"result\"></div>\n</div>\n\n<div style=\"text-align:center;padding:18px;background:linear-gradient(145deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.1);border-radius:14px;margin-top:20px\">\n<p style=\"color:#aaa;font-size:0.85em;margin-bottom:8px\">&#9829; Like this tool? Check out our premium templates and resources</p>\n<a href=\"https://payhip.com/ArmanisDevTools\" target=\"_blank\" style=\"color:#667eea;text-decoration:none;font-weight:bold;font-size:0.9em\">Visit Our Store</a>\n<span style=\"color:#444;margin:0 8px\">|</span>\n<a href=\"https://crazeemedia.app.n8n.cloud/webhook/ai-tools\" style=\"color:#667eea;text-decoration:none;font-size:0.9em\">All Tools</a>\n<span style=\"color:#444;margin:0 8px\">|</span>\n<a href=\"https://ko-fi.com/armanidev\" target=\"_blank\" style=\"color:#667eea;text-decoration:none;font-size:0.9em\">Support on Ko-fi</a>\n</div>\n\n<div class=\"footer\"><p>Built by <a href=\"https://github.com/acunningham-ship-it\">Armani</a> | <a href=\"https://payhip.com/ArmanisDevTools\">Shop Templates</a></p></div>\n</div>\n<script>\nasync function generate(e) {\n  e.preventDefault();\n  const loading = document.getElementById('loading');\n  const result = document.getElementById('result');\n  loading.style.display = 'block';\n  result.style.display = 'none';\n  try {\n    const resp = await fetch('https://crazeemedia.app.n8n.cloud/webhook/code-review-api', {\n      method: 'POST',\n      headers: {'Content-Type': 'application/json'},\n      body: JSON.stringify({\n        language: document.getElementById('language').value,\n        code: document.getElementById('code').value\n      })\n    });\n    const data = await resp.json();\n    result.textContent = data.review || data.text || data.output || JSON.stringify(data);\n    result.style.display = 'block';\n  } catch(err) {\n    result.textContent = 'Error: ' + err.message;\n    result.style.display = 'block';\n  }\n  loading.style.display = 'none';\n}\n</script>\n</body></html>",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          500,
+          300
+        ],
+        "id": "code-review-1-resp",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Armani Cunningham",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-01T23:53:28.245Z",
+        "id": 314,
+        "workflowId": "QYhrBIOAPItDkFUd",
+        "versionId": "42ddbef3-ffe7-4b1b-a1b2-a4a09923db25",
+        "event": "activated",
+        "userId": "a8e49b89-e536-45ff-8330-fab9f0943ab1"
+      }
+    ]
+  }
+}
